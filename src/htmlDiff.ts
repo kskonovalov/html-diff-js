@@ -76,7 +76,7 @@ const htmlToTokens = (html: string) => {
           }
           currentWord = char;
           mode = 'whitespace';
-        } else if (/[\w\\#@]+/i.test(char)) {
+        } else if (/[\p{L}\p{N}_\-\\#@]/u.test(char)) {
           currentWord += char;
         } else {
           if (currentWord) {
@@ -316,19 +316,20 @@ const calculateOperations = (beforeTokens: string[], afterTokens: string[]) => {
     action: 'none',
   };
   const isSingleWhitespace = (op: OperationType) => {
-    if (op.action !== 'equal') {
-      return false;
-    }
+    if (op.action !== 'equal') return false;
     if (op.endInBefore === undefined) return false;
-    if (op.endInBefore - op.startInBefore !== 0) {
-      return false;
-    }
+    if (op.endInBefore - op.startInBefore !== 0) return false;
     return /^\s$/.test(beforeTokens[op.startInBefore]);
+  };
+  const lastOpStartsWithWordToken = () => {
+    if (lastOp.action !== 'replace') return false;
+    if (lastOp.startInBefore === undefined) return false;
+    return /[\p{L}\p{N}_\-\\#@]/u.test(beforeTokens[lastOp.startInBefore]);
   };
   for (j = 0; j < operations.length; j++) {
     op = operations[j];
     if (
-      (isSingleWhitespace(op) && lastOp.action === 'replace') ||
+      (isSingleWhitespace(op) && lastOpStartsWithWordToken()) ||
       (op.action === 'replace' && lastOp.action === 'replace')
     ) {
       lastOp.endInBefore = op.endInBefore;
