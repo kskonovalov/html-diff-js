@@ -90,12 +90,12 @@ export const diffHTML = `<div>
 
     <p>Here's a <del>quick </del>summary of the key <ins>performance </ins>metrics from <del>the report</del><ins>Q2</ins>:</p>
 
-    <table>
+    <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; margin-top: 10px;">
         <thead>
             <tr>
-                <th>Metric</th>
-                <th><del>Q2 </del>Actual</th>
-                <th><ins>Q2 </ins>Target</th>
+                <th style="background-color: #f2f2f2;">Metric</th>
+                <th style="background-color: #f2f2f2;"><del>Q2 </del>Actual</th>
+                <th style="background-color: #f2f2f2;"><ins>Q2 </ins>Target</th>
             </tr>
         </thead>
         <tbody>

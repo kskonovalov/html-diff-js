@@ -1,10 +1,10 @@
 export const beforeHTMLLetter = `<div>
-    <p>Hi Alex,</p>
+    <p style="color:red">Hi Alex,</p>
 
-    <p>I hope you're doing well. I wanted to follow up on the Q2 marketing report. Are you available this Thursday for a
+    <p><a href="#asd">I hope you're  doing well</a>. I wanted to follow up on the Q2 marketing report. Are you available this Thursday for a
         quick sync to review the draft?</p>
 
-    <p>Here's a quick summary of the key metrics from the report:</p>
+    <p><a href="#bfgbfg">Here's a quick summary</a> of the key metrics from the report:</p>
 
     <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; margin-top: 10px;">
         <thead>
@@ -40,12 +40,12 @@ export const beforeHTMLLetter = `<div>
 </div>`;
 
 export const afterHTMLLetter = `<div>
-    <p>Hi Alex,</p>
+    <p style="color:green">Hi Alex,</p>
 
-    <p>Hope you're having a great week! I wanted to check in regarding the Q2 marketing report. Would you be available
+    <p><a href="https://google.com">I hope you're  doing well</a>! I wanted to check in regarding the Q2 marketing report. Would you be available
         on Thursday to go over the current draft together?</p>
 
-    <p>Here's a summary of the key performance metrics from Q2:</p>
+    <p><a href="#bfgbfg">Here's a summary</a> of the key performance metrics from Q2:</p>
 
     <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; margin-top: 10px;">
         <thead>

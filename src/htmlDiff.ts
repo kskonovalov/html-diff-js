@@ -342,12 +342,10 @@ const calculateOperations = (beforeTokens: string[], afterTokens: string[]) => {
   return postProcessed;
 };
 const consecutiveWhere = (start: number, content: string[], predicate: (token: string) => boolean) => {
-  let answer, i, index, lastMatchingIndex, len, token;
   content = content.slice(start, +content.length + 1 || 9e9);
-  lastMatchingIndex = void 0;
-  for (index = i = 0, len = content.length; i < len; index = ++i) {
-    token = content[index];
-    answer = predicate(token);
+  let lastMatchingIndex: number | undefined;
+  for (let index = 0; index < content.length; index++) {
+    const answer = predicate(content[index]);
     if (answer === true) {
       lastMatchingIndex = index;
     }
@@ -361,34 +359,26 @@ const consecutiveWhere = (start: number, content: string[], predicate: (token: s
   return [];
 };
 const wrap = (tag: string, content: string[]) => {
-  let nonTags, position, rendering, tags;
-  rendering = '';
-  position = 0;
+  let rendering = '';
+  let position = 0;
   const length = content.length;
-  let whileCondition = true;
-  while (whileCondition) {
-    if (position >= length) {
-      whileCondition = false;
-      break;
-    }
-    nonTags = consecutiveWhere(position, content, isntTag);
+  while (true) {
+    if (position >= length) break;
+    const nonTags = consecutiveWhere(position, content, isntTag);
     position += nonTags.length;
     if (nonTags.length !== 0) {
       rendering += `<${tag}>${nonTags.join('')}</${tag}>`;
     }
-    if (position >= length) {
-      whileCondition = false;
-      break;
-    }
-    tags = consecutiveWhere(position, content, isTag);
+    if (position >= length) break;
+    const tags = consecutiveWhere(position, content, isTag);
     position += tags.length;
     rendering += tags.join('');
   }
   return rendering;
 };
 
-const equalAction = (op: OperationType, beforeTokens: string[]) => {
-  return beforeTokens.slice(op.startInBefore, op.endInBefore === undefined ? 9e9 : op.endInBefore + 1).join('');
+const equalAction = (op: OperationType, _beforeTokens: string[], afterTokens: string[]) => {
+  return afterTokens.slice(op.startInAfter, op.endInAfter === undefined ? 9e9 : op.endInAfter + 1).join('');
 };
 const insertAction = (op: OperationType, _beforeTokens: string[], afterTokens: string[]) => {
   const val = afterTokens.slice(op.startInAfter, op.endInAfter === undefined ? 9e9 : op.endInAfter + 1);
@@ -396,7 +386,8 @@ const insertAction = (op: OperationType, _beforeTokens: string[], afterTokens: s
 };
 const deleteAction = (op: OperationType, beforeTokens: string[]) => {
   const val = beforeTokens.slice(op.startInBefore, op.endInBefore === undefined ? 9e9 : op.endInBefore + 1);
-  return wrap('del', val);
+  const strippedVal = val.map((token) => (isTag(token) ? removeTagAttributes(token) : token));
+  return wrap('del', strippedVal);
 };
 const replaceAction = (op: OperationType, beforeTokens: string[], afterTokens: string[]) => {
   return deleteAction(op, beforeTokens) + insertAction(op, beforeTokens, afterTokens);
@@ -437,10 +428,12 @@ export const htmlDiff = (before: string, after: string) => {
   const beforeWithoutAttributes = removeTagAttributes(before);
   const afterWithoutAttributes = removeTagAttributes(after);
   if (beforeWithoutAttributes === afterWithoutAttributes) {
-    return before;
+    return after;
   }
-  const beforeTokens = htmlToTokens(beforeWithoutAttributes);
-  const afterTokens = htmlToTokens(afterWithoutAttributes);
-  const opsTokens = calculateOperations(beforeTokens, afterTokens);
+  const beforeTokens = htmlToTokens(before);
+  const afterTokens = htmlToTokens(after);
+  const beforeTokensStripped = htmlToTokens(beforeWithoutAttributes);
+  const afterTokensStripped = htmlToTokens(afterWithoutAttributes);
+  const opsTokens = calculateOperations(beforeTokensStripped, afterTokensStripped);
   return renderOperations(beforeTokens, afterTokens, opsTokens);
 };
